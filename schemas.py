@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -9,6 +9,9 @@ class Todo(BaseModel):
 
 
 class TodoRead(Todo):
+    # Enable ORM mode so FastAPI can serialize SQLAlchemy model instances
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     created_at : datetime
     updated_at : datetime
