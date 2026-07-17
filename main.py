@@ -17,7 +17,7 @@ app = FastAPI(
     version="1.0.0",
     contact={
         "name": "Hendi Santika",
-        "email": "hendi.santika@mhdc.co.id",
+        "email": "hendisantika@yahoo.co.id",
         "url": "https://github.com/hendisantika",
     },
     license_info={
