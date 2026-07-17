@@ -2,9 +2,13 @@ from fastapi import FastAPI, APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+import models
 import repositories
 import schemas
-from database import SessionLocal
+from database import SessionLocal, engine
+
+# Create database tables from the ORM models if they don't exist yet
+models.Base.metadata.create_all(bind=engine)
 
 #create FastAPI application instance
 app = FastAPI()
