@@ -62,3 +62,24 @@ async def patch_todo_v1(todo_id: str, db: Session = Depends(get_db)):
         return todo
     else:
         raise HTTPException(status_code=400, detail="Todo is not found")
+
+
+'''
+ -  Patch is only partial update therefore we use TodoPatch schemas which we put optional parameter
+    for title & status. If any of these parameters are added then the value of these parameters will
+    be updated
+ '''
+
+
+@todo_router_v1.patch("/{todo_id}", summary="Partial update todo", status_code=status.HTTP_200_OK,
+                      response_model=schemas.TodoRead)
+async def patch_todo_v1(todo_id: str, update_todo: schemas.TodoPatch, db: Session = Depends(get_db)):
+    todo = repositories.get_todo(db, todo_id)
+    if todo is not None:
+        repositories.update_todo(db, update_todo, todo_id)
+        db.commit()
+        db.refresh(todo)
+
+        return todo
+    else:
+        raise HTTPException(status_code=400, detail="Todo is not found")
