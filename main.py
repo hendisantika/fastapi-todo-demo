@@ -104,3 +104,18 @@ async def put_todo_v1(todo_id: str, update_todo: schemas.Todo, db: Session = Dep
         return todo
     else:
         raise HTTPException(status_code=400, detail="Todo is not found")
+
+
+@todo_router_v1.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete todo")
+async def delete_todo_v1(todo_id: str, db: Session = Depends(get_db)):
+    todo = repositories.get_todo(db, todo_id)
+    if todo is not None:
+        db.delete(todo)
+        db.commit()
+        return
+    else:
+        raise HTTPException(status_code=400, detail="Todo is not found")
+
+
+# Create versioning for API endpoint by incorporating todo_router_v1 into FastAPI application instance
+app.include_router(todo_router_v1, prefix="/v1")
