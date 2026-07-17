@@ -11,7 +11,20 @@ from database import SessionLocal, engine
 models.Base.metadata.create_all(bind=engine)
 
 #create FastAPI application instance
-app = FastAPI()
+app = FastAPI(
+    title="FastAPI Todo Demo",
+    description="A simple todo CRUD API built with FastAPI and MySQL.",
+    version="1.0.0",
+    contact={
+        "name": "Hendi Santika",
+        "email": "hendi.santika@mhdc.co.id",
+        "url": "https://github.com/hendisantika",
+    },
+    license_info={
+        "name": "MIT License",
+        "url": "https://opensource.org/licenses/MIT",
+    },
+)
 
 def get_db():
     db = SessionLocal()
