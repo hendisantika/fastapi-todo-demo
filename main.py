@@ -83,3 +83,24 @@ async def patch_todo_v1(todo_id: str, update_todo: schemas.TodoPatch, db: Sessio
         return todo
     else:
         raise HTTPException(status_code=400, detail="Todo is not found")
+
+
+'''
+ -  Put request means all update according to the REST best practice. On this case 
+    the required parameters are identical with post so we use the same schema for 
+    incoming request with post which is Todo
+'''
+
+
+@todo_router_v1.put("/{todo_id}", summary="Update todo", status_code=status.HTTP_200_OK,
+                    response_model=schemas.TodoRead)
+async def put_todo_v1(todo_id: str, update_todo: schemas.Todo, db: Session = Depends(get_db)):
+    todo = repositories.get_todo(db, todo_id)
+    if todo is not None:
+        repositories.update_todo(db, update_todo, todo_id)
+        db.commit()
+        db.refresh(todo)
+
+        return todo
+    else:
+        raise HTTPException(status_code=400, detail="Todo is not found")
