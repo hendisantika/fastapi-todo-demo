@@ -11,3 +11,15 @@ def get_todo(db: Session, todo_id: int):
 
 def delete_todo(db: Session, todo_id: int):
     return db.query(models.Todo).filter(models.Todo.id == todo_id).delete()
+
+def update_todo(db: Session, update_todo: models.Todo, todo_id: int):
+    todo = get_todo(db, todo_id)
+    if todo is not None:
+        todo.title = update_todo.title if update_todo.title != None else todo.title
+        todo.status = update_todo.status if update_todo.status != None else todo.status
+        todo.updated_at = datetime.now()
+        db.commit()
+        db.refresh(todo)
+        return todo
+    else:
+        return None
