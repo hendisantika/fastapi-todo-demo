@@ -1,11 +1,10 @@
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
-from database import Base, SessionLocal
-from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import Session
 
-import models,schemas, repositories
-import logging
+import repositories
+import schemas
+from database import SessionLocal
 
 #create FastAPI application instance
 app = FastAPI()
@@ -47,3 +46,19 @@ async def get_todo_v1(db:Session=Depends(get_db)):
 @todo_router_v1.post("", summary="Create a new todo", status_code=status.HTTP_201_CREATED, response_model=schemas.TodoRead)
 async def post_todo_v1(todo:schemas.Todo, db:Session=Depends(get_db)):
     return repositories.create_todo(db, todo)
+
+
+'''
+ -  To get todo detail we only need one parameter to fetch a todo based on its id
+ -  Throw http exception if record is not found
+'''
+
+
+@todo_router_v1.get("/{todo_id}", summary="Get todo detail", status_code=status.HTTP_200_OK,
+                    response_model=schemas.TodoRead)
+async def patch_todo_v1(todo_id: str, db: Session = Depends(get_db)):
+    todo = repositories.get_todo(db, todo_id)
+    if todo is not None:
+        return todo
+    else:
+        raise HTTPException(status_code=400, detail="Todo is not found")
