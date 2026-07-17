@@ -103,17 +103,122 @@ All endpoints are prefixed with `/v1`.
 | `PUT`    | `/v1/todos/{id}`    | Full update        | `200 OK`       |
 | `DELETE` | `/v1/todos/{id}`    | Delete a todo      | `204 No Content` |
 
-### Example
+### curl Examples
+
+The examples below assume the server is running at `http://127.0.0.1:8000`.
+
+#### Create a todo — `POST /v1/todos`
 
 ```bash
-# Create a todo
 curl -X POST http://127.0.0.1:8000/v1/todos \
   -H "Content-Type: application/json" \
   -d '{"title": "Read FastAPI docs", "status": "Doing"}'
+```
 
-# List todos
+Response (`201 Created`):
+
+```json
+{
+  "title": "Read FastAPI docs",
+  "status": "Doing",
+  "id": 1,
+  "created_at": "2026-07-17T10:00:00",
+  "updated_at": "2026-07-17T10:00:00"
+}
+```
+
+#### List all todos — `GET /v1/todos`
+
+```bash
 curl http://127.0.0.1:8000/v1/todos
 ```
+
+Response (`200 OK`):
+
+```json
+[
+  {
+    "title": "Read FastAPI docs",
+    "status": "Doing",
+    "id": 1,
+    "created_at": "2026-07-17T10:00:00",
+    "updated_at": "2026-07-17T10:00:00"
+  }
+]
+```
+
+#### Get a single todo — `GET /v1/todos/{id}`
+
+```bash
+curl http://127.0.0.1:8000/v1/todos/1
+```
+
+Response (`200 OK`):
+
+```json
+{
+  "title": "Read FastAPI docs",
+  "status": "Doing",
+  "id": 1,
+  "created_at": "2026-07-17T10:00:00",
+  "updated_at": "2026-07-17T10:00:00"
+}
+```
+
+Returns `400 Bad Request` with `{"detail": "Todo is not found"}` if the id does not exist.
+
+#### Partially update a todo — `PATCH /v1/todos/{id}`
+
+Only the fields you send are changed; omit the rest.
+
+```bash
+curl -X PATCH http://127.0.0.1:8000/v1/todos/1 \
+  -H "Content-Type: application/json" \
+  -d '{"status": "Done"}'
+```
+
+Response (`200 OK`):
+
+```json
+{
+  "title": "Read FastAPI docs",
+  "status": "Done",
+  "id": 1,
+  "created_at": "2026-07-17T10:00:00",
+  "updated_at": "2026-07-17T10:05:00"
+}
+```
+
+#### Fully update a todo — `PUT /v1/todos/{id}`
+
+Both `title` and `status` are required.
+
+```bash
+curl -X PUT http://127.0.0.1:8000/v1/todos/1 \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Read FastAPI docs thoroughly", "status": "Done"}'
+```
+
+Response (`200 OK`):
+
+```json
+{
+  "title": "Read FastAPI docs thoroughly",
+  "status": "Done",
+  "id": 1,
+  "created_at": "2026-07-17T10:00:00",
+  "updated_at": "2026-07-17T10:10:00"
+}
+```
+
+#### Delete a todo — `DELETE /v1/todos/{id}`
+
+```bash
+curl -i -X DELETE http://127.0.0.1:8000/v1/todos/1
+```
+
+Returns `204 No Content` on success, or `400 Bad Request` with
+`{"detail": "Todo is not found"}` if the id does not exist.
 
 ## License
 
