@@ -34,3 +34,16 @@ todo_router_v1 = APIRouter(prefix="/todos", tags=["todos v1"])
     status.HTTP_500_INTERNAL_SERVER_ERROR
 
 '''
+@todo_router_v1.get("", summary="List all todos", status_code=status.HTTP_200_OK, response_model=list[schemas.TodoRead])
+async def get_todo_v1(db:Session=Depends(get_db)):
+    return repositories.get_todos(db)
+
+
+'''
+ -  We use response from TodoRead schema so it'll show all 4 properties of the record.
+ -  Incoming request uses Todo schema. According to the schema two parameters are mandatory
+    it'll act as a validation as well
+'''
+@todo_router_v1.post("", summary="Create a new todo", status_code=status.HTTP_201_CREATED, response_model=schemas.TodoRead)
+async def post_todo_v1(todo:schemas.Todo, db:Session=Depends(get_db)):
+    return repositories.create_todo(db, todo)
